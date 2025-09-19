@@ -1,5 +1,5 @@
-// FIX: Changed express import to default to resolve type errors with Request and Response.
-import express from "express";
+// FIX: Import Request and Response types directly from express.
+import { Request, Response } from "express";
 import Appointment from "../models/Appointment";
 import Customer from "../models/Customer";
 import Service from "../models/Service";
@@ -8,10 +8,7 @@ import mongoose from "mongoose";
 // @route   POST api/appointments
 // @desc    Criar um novo agendamento
 // @access  Público
-export const createAppointment = async (
-  req: express.Request,
-  res: express.Response
-) => {
+export const createAppointment = async (req: Request, res: Response) => {
   const { customer, serviceId, startTime } = req.body;
 
   if (
@@ -89,10 +86,7 @@ export const createAppointment = async (
 // @route   GET api/appointments
 // @desc    Obter todos os agendamentos (para admin)
 // @access  Privado (Admin)
-export const getAppointments = async (
-  req: express.Request,
-  res: express.Response
-) => {
+export const getAppointments = async (req: Request, res: Response) => {
   try {
     // Lógica de filtro (simplificada, pode ser expandida)
     const { serviceId, days, month } = req.query;
@@ -132,10 +126,7 @@ export const getAppointments = async (
 // @route   GET api/appointments/availability
 // @desc    Obter horários disponíveis
 // @access  Público
-export const getAvailability = async (
-  req: express.Request,
-  res: express.Response
-) => {
+export const getAvailability = async (req: Request, res: Response) => {
   const { date, serviceId } = req.query;
 
   if (!date || !serviceId) {
@@ -199,10 +190,7 @@ export const getAvailability = async (
 // @route   DELETE api/appointments/:id
 // @desc    Deletar um agendamento
 // @access  Privado (Admin)
-export const deleteAppointment = async (
-  req: express.Request,
-  res: express.Response
-) => {
+export const deleteAppointment = async (req: Request, res: Response) => {
   try {
     const appointment = await Appointment.findById(req.params.id);
 

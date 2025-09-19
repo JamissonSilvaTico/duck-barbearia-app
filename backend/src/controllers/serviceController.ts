@@ -1,14 +1,11 @@
-// FIX: Changed express import to default to resolve type errors with Request and Response.
-import express from "express";
+// FIX: Import Request and Response types directly from express.
+import { Request, Response } from "express";
 import Service, { IService } from "../models/Service";
 
 // @route   GET api/services
 // @desc    Obter todos os serviços
 // @access  Público
-export const getServices = async (
-  req: express.Request,
-  res: express.Response
-) => {
+export const getServices = async (req: Request, res: Response) => {
   try {
     const services = await Service.find().sort({ name: 1 });
     res.json(services);
@@ -21,10 +18,7 @@ export const getServices = async (
 // @route   POST api/services
 // @desc    Criar um novo serviço
 // @access  Privado (Admin)
-export const createService = async (
-  req: express.Request,
-  res: express.Response
-) => {
+export const createService = async (req: Request, res: Response) => {
   const { name, duration, price } = req.body;
 
   try {
@@ -45,10 +39,7 @@ export const createService = async (
 // @route   PUT api/services/:id
 // @desc    Atualizar um serviço
 // @access  Privado (Admin)
-export const updateService = async (
-  req: express.Request,
-  res: express.Response
-) => {
+export const updateService = async (req: Request, res: Response) => {
   const { name, duration, price } = req.body;
 
   const serviceFields: Partial<IService> = {};
@@ -76,10 +67,7 @@ export const updateService = async (
 // @route   DELETE api/services/:id
 // @desc    Deletar um serviço
 // @access  Privado (Admin)
-export const deleteService = async (
-  req: express.Request,
-  res: express.Response
-) => {
+export const deleteService = async (req: Request, res: Response) => {
   try {
     const service = await Service.findById(req.params.id);
     if (!service)

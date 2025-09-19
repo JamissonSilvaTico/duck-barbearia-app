@@ -1,92 +1,70 @@
-// FIX: Changed express import to default to resolve type errors with Request and Response.
-import express from "express";
-import Service, { IService } from "../models/Service";
+// FIX: Import Request and Response types directly from express.
+import { Request, Response } from "express";
+import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
+import User from "../models/User";
 
-// @route   GET api/services
-// @desc    Obter todos os serviços
-// @access  Público
-export const getServices = async (
-  req: express.Request,
-  res: express.Response
-) => {
-  try {
-    const services = await Service.find().sort({ name: 1 });
-    res.json(services);
-  } catch (err: any) {
-    console.error(err.message);
-    res.status(500).send("Erro no servidor");
-  }
-};
-
-// @route   POST api/services
-// @desc    Criar um novo serviço
-// @access  Privado (Admin)
-export const createService = async (
-  req: express.Request,
-  res: express.Response
-) => {
-  const { name, duration, price } = req.body;
+export const login = async (req: Request, res: Response) => {
+  const { password } = req.body;
 
   try {
-    const newService = new Service({
-      name,
-      duration,
-      price,
-    });
+    // Como só há um administrador, podemos buscar o primeiro usuário que encontrarmos.
+    const user = await User.findOne();
+    if (!user) {
+      return res
+        .status(400)
+        .json({ msg: "Usuário administrador não encontrado." });
+    }
 
-    const service = await newService.save();
-    res.json(service);
-  } catch (err: any) {
-    console.error(err.message);
-    res.status(500).send("Erro no servidor");
-  }
-};
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) {
+      return res.status(400).json({ msg: "Senha incorreta." });
+    }
 
-// @route   PUT api/services/:id
-// @desc    Atualizar um serviço
-// @access  Privado (Admin)
-export const updateService = async (
-  req: express.Request,
-  res: express.Response
-) => {
-  const { name, duration, price } = req.body;
+    const payload = { user: { id: user.id } };
+    const jwtSecret = process.env.JWT_SECRET;
 
-  const serviceFields: Partial<IService> = {};
-  if (name) serviceFields.name = name;
-  if (duration) serviceFields.duration = duration;
-  if (price) serviceFields.price = price;
+    if (!jwtSecret) {
+      throw new Error("A chave secreta JWT não está definida.");
+    }
 
-  try {
-    let service = await Service.findById(req.params.id);
-    if (!service)
-      return res.status(404).json({ msg: "Serviço não encontrado" });
-
-    service = await Service.findByIdAndUpdate(
-      req.params.id,
-      { $set: serviceFields },
-      { new: true }
+    jwt.sign(
+      payload,
+      jwtSecret,
+      { expiresIn: "8h" }, // Token expira em 8 horas
+      (err, token) => {
+        if (err) throw err;
+        res.json({ token });
+      }
     );
-    res.json(service);
   } catch (err: any) {
     console.error(err.message);
     res.status(500).send("Erro no servidor");
   }
 };
 
-// @route   DELETE api/services/:id
-// @desc    Deletar um serviço
-// @access  Privado (Admin)
-export const deleteService = async (
-  req: express.Request,
-  res: express.Response
-) => {
-  try {
-    const service = await Service.findById(req.params.id);
-    if (!service)
-      return res.status(404).json({ msg: "Serviço não encontrado" });
+export const changePassword = async (req: Request, res: Response) => {
+  const { newPassword } = req.body;
 
-    await Service.findByIdAndDelete(req.params.id);
-    res.json({ msg: "Serviço removido" });
+  if (!newPassword || newPassword.length < 6) {
+    return res
+      .status(400)
+      .json({ msg: "A nova senha deve ter pelo menos 6 caracteres." });
+  }
+
+  try {
+    const user = await User.findOne();
+    if (!user) {
+      return res
+        .status(404)
+        .json({ msg: "Usuário administrador não encontrado." });
+    }
+
+    const salt = await bcrypt.genSalt(10);
+    user.password = await bcrypt.hash(newPassword, salt);
+    await user.save();
+
+    res.json({ msg: "Senha alterada com sucesso." });
   } catch (err: any) {
     console.error(err.message);
     res.status(500).send("Erro no servidor");
