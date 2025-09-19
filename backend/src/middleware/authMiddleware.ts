@@ -1,5 +1,5 @@
-// FIX: Changed express import from namespace to named imports (Request, Response, NextFunction) and updated type annotations to fix type errors.
-import { Request, Response, NextFunction } from "express";
+// FIX: Changed express import to default to resolve type errors with Request, Response, and NextFunction.
+import express from "express";
 import jwt from "jsonwebtoken";
 
 // Estende a interface Request do Express para incluir a propriedade 'user'
@@ -11,7 +11,11 @@ declare global {
   }
 }
 
-const authMiddleware = (req: Request, res: Response, next: NextFunction) => {
+const authMiddleware = (
+  req: express.Request,
+  res: express.Response,
+  next: express.NextFunction
+) => {
   const authHeader = req.header("Authorization");
 
   if (!authHeader) {

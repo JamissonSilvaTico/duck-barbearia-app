@@ -1,5 +1,5 @@
-// FIX: Changed express import to use named imports for Request and Response to resolve type errors.
-import { Request, Response } from "express";
+// FIX: Changed express import to default to resolve type errors with Request and Response.
+import express from "express";
 import Appointment from "../models/Appointment";
 import Customer from "../models/Customer";
 import Service from "../models/Service";
@@ -8,7 +8,10 @@ import mongoose from "mongoose";
 // @route   POST api/appointments
 // @desc    Criar um novo agendamento
 // @access  Público
-export const createAppointment = async (req: Request, res: Response) => {
+export const createAppointment = async (
+  req: express.Request,
+  res: express.Response
+) => {
   const { customer, serviceId, startTime } = req.body;
 
   if (
@@ -86,7 +89,10 @@ export const createAppointment = async (req: Request, res: Response) => {
 // @route   GET api/appointments
 // @desc    Obter todos os agendamentos (para admin)
 // @access  Privado (Admin)
-export const getAppointments = async (req: Request, res: Response) => {
+export const getAppointments = async (
+  req: express.Request,
+  res: express.Response
+) => {
   try {
     // Lógica de filtro (simplificada, pode ser expandida)
     const { serviceId, days, month } = req.query;
@@ -126,7 +132,10 @@ export const getAppointments = async (req: Request, res: Response) => {
 // @route   GET api/appointments/availability
 // @desc    Obter horários disponíveis
 // @access  Público
-export const getAvailability = async (req: Request, res: Response) => {
+export const getAvailability = async (
+  req: express.Request,
+  res: express.Response
+) => {
   const { date, serviceId } = req.query;
 
   if (!date || !serviceId) {
@@ -190,7 +199,10 @@ export const getAvailability = async (req: Request, res: Response) => {
 // @route   DELETE api/appointments/:id
 // @desc    Deletar um agendamento
 // @access  Privado (Admin)
-export const deleteAppointment = async (req: Request, res: Response) => {
+export const deleteAppointment = async (
+  req: express.Request,
+  res: express.Response
+) => {
   try {
     const appointment = await Appointment.findById(req.params.id);
 

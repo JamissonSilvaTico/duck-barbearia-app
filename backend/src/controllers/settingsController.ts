@@ -1,11 +1,14 @@
-// FIX: Changed express import to use named imports for Request and Response to resolve type errors.
-import { Request, Response } from "express";
+// FIX: Changed express import to default to resolve type errors with Request and Response.
+import express from "express";
 import Settings, { ISettings } from "../models/Settings";
 
 // @route   GET api/settings
 // @desc    Obter as configurações da UI
 // @access  Público
-export const getSettings = async (req: Request, res: Response) => {
+export const getSettings = async (
+  req: express.Request,
+  res: express.Response
+) => {
   try {
     // Só deve haver um documento de configurações
     let settings = await Settings.findOne();
@@ -29,7 +32,10 @@ export const getSettings = async (req: Request, res: Response) => {
 // @route   PUT api/settings
 // @desc    Atualizar as configurações da UI
 // @access  Privado (Admin)
-export const updateSettings = async (req: Request, res: Response) => {
+export const updateSettings = async (
+  req: express.Request,
+  res: express.Response
+) => {
   const { logo, tagline, buttonColor, whatsappNumber } = req.body;
 
   const settingsFields: Partial<ISettings> = {};
