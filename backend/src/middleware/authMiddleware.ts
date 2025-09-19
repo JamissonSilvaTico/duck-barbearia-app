@@ -1,5 +1,5 @@
-// FIX: Import Request, Response, and NextFunction types directly from express.
-import { Request, Response, NextFunction } from "express";
+// Use `import type` for type-only imports to avoid module resolution issues.
+import type { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
 
 // Estende a interface Request do Express para incluir a propriedade 'user'

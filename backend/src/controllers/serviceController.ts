@@ -1,5 +1,5 @@
-// FIX: Import Request and Response types directly from express.
-import { Request, Response } from "express";
+// Use `import type` for type-only imports to avoid module resolution issues.
+import type { Request, Response } from "express";
 import Service, { IService } from "../models/Service";
 
 // @route   GET api/services
