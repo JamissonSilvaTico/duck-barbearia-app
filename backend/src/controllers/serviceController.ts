@@ -1,26 +1,24 @@
-
-
-// FIX: Use namespace import for express to ensure correct type resolution.
-import * as express from 'express';
-import Service, { IService } from '../models/Service';
+// FIX: Changed express import to use named imports for Request and Response to resolve type errors.
+import { Request, Response } from "express";
+import Service, { IService } from "../models/Service";
 
 // @route   GET api/services
 // @desc    Obter todos os serviços
 // @access  Público
-export const getServices = async (req: express.Request, res: express.Response) => {
+export const getServices = async (req: Request, res: Response) => {
   try {
     const services = await Service.find().sort({ name: 1 });
     res.json(services);
   } catch (err: any) {
     console.error(err.message);
-    res.status(500).send('Erro no servidor');
+    res.status(500).send("Erro no servidor");
   }
 };
 
 // @route   POST api/services
 // @desc    Criar um novo serviço
 // @access  Privado (Admin)
-export const createService = async (req: express.Request, res: express.Response) => {
+export const createService = async (req: Request, res: Response) => {
   const { name, duration, price } = req.body;
 
   try {
@@ -34,14 +32,14 @@ export const createService = async (req: express.Request, res: express.Response)
     res.json(service);
   } catch (err: any) {
     console.error(err.message);
-    res.status(500).send('Erro no servidor');
+    res.status(500).send("Erro no servidor");
   }
 };
 
 // @route   PUT api/services/:id
 // @desc    Atualizar um serviço
 // @access  Privado (Admin)
-export const updateService = async (req: express.Request, res: express.Response) => {
+export const updateService = async (req: Request, res: Response) => {
   const { name, duration, price } = req.body;
 
   const serviceFields: Partial<IService> = {};
@@ -51,7 +49,8 @@ export const updateService = async (req: express.Request, res: express.Response)
 
   try {
     let service = await Service.findById(req.params.id);
-    if (!service) return res.status(404).json({ msg: 'Serviço não encontrado' });
+    if (!service)
+      return res.status(404).json({ msg: "Serviço não encontrado" });
 
     service = await Service.findByIdAndUpdate(
       req.params.id,
@@ -61,22 +60,23 @@ export const updateService = async (req: express.Request, res: express.Response)
     res.json(service);
   } catch (err: any) {
     console.error(err.message);
-    res.status(500).send('Erro no servidor');
+    res.status(500).send("Erro no servidor");
   }
 };
 
 // @route   DELETE api/services/:id
 // @desc    Deletar um serviço
 // @access  Privado (Admin)
-export const deleteService = async (req: express.Request, res: express.Response) => {
+export const deleteService = async (req: Request, res: Response) => {
   try {
     const service = await Service.findById(req.params.id);
-    if (!service) return res.status(404).json({ msg: 'Serviço não encontrado' });
+    if (!service)
+      return res.status(404).json({ msg: "Serviço não encontrado" });
 
     await Service.findByIdAndDelete(req.params.id);
-    res.json({ msg: 'Serviço removido' });
+    res.json({ msg: "Serviço removido" });
   } catch (err: any) {
     console.error(err.message);
-    res.status(500).send('Erro no servidor');
+    res.status(500).send("Erro no servidor");
   }
 };
