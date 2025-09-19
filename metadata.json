@@ -1,0 +1,5 @@
+{
+  "name": "Duck Barbearia Agendamento",
+  "description": "Um aplicativo web completo para agendamento de clientes e gerenciamento para a Duck Barbearia. Clientes podem se cadastrar e agendar serviços, enquanto o painel administrativo permite visualizar agendamentos, gerenciar serviços e finanças.",
+  "requestFramePermissions": []
+}
