@@ -1,5 +1,5 @@
-// Use `import type` for type-only imports to avoid module resolution issues.
-import type { Request, Response } from "express";
+// FIX: Changed type-only import to a regular import for Express types.
+import { Request, Response } from "express";
 import Appointment from "../models/Appointment";
 import Customer from "../models/Customer";
 import Service from "../models/Service";

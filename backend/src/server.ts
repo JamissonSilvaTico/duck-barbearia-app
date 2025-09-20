@@ -1,4 +1,4 @@
-import express from "express";
+import express, { Express } from "express";
 import cors from "cors";
 import dotenv from "dotenv";
 import connectDB, { seedAdminUser, seedInitialSettings } from "./config/db";
@@ -7,8 +7,8 @@ import apiRoutes from "./routes/api";
 // Carrega as variáveis de ambiente do arquivo .env
 dotenv.config();
 
-// Let type inference handle the app type to avoid overload resolution issues.
-const app = express();
+// Explicitly type app to fix overload resolution issues.
+const app: Express = express();
 
 // Configuração do CORS para produção
 const corsOptions = {
@@ -17,6 +17,8 @@ const corsOptions = {
 };
 
 // Middlewares
+// FIX: Enable CORS middleware.
+app.use(cors(corsOptions));
 app.use(express.json({ limit: "5mb" }));
 app.use(express.urlencoded({ extended: true, limit: "5mb" }));
 
